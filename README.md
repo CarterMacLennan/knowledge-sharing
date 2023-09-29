@@ -8,6 +8,21 @@
 ## Data Modeling
 #### Introduction
 
+#### Kimball's Dimensional Modeling
+Kimball's approach denormalizes the source/ staging data into two main components:
+
+**Facts:**
+
+Holds quantitative metrics about business operations.
+
+**Dimensions:**
+
+Holds the descriptive information that give context to those facts.
+
+**Fact Table Grain:**
+
+
+
 #### Recommendations
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
 
