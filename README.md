@@ -14,14 +14,29 @@ Database systems create query execution plans to better optimize our queries. If
 5. Despite coming first in our queries we finally transition to the `SELECT` clause to define what columns we want to return.
 6. Finally we end with out `ORDER BY` and `LIMIT` clauses
 
-**Room for optimizations:**
-1. `SELECT` Clause: It's important to choose covering indexes which cover all the columns used in our SELECT, JOIN, and WHERE clauses.
-2. `JOIN` Clause: To improve the performance on your join, it's often beneficial to use indexes on your join columns.
-3. `WHERE` Clause: It's important to write SARGABLE (Search ARGument ABLE) queries which can use your indexes to improve your query performance. For example if you're using a function on an indexed column inside of your where clause it can prevent the underlying database engine from using the index on that column. This is because that function would have needed to have been applied on every row in that index. If this is necessary, many database systems support creating function-based indexes. This may be a valuable workaround depending on your query patterns.
-4. `ORDER BY` + `LIMIT` Clauses: Try to limit your results using filtering and pagination. To reduce the amount of data stored in memory and improve sorting performance it's important to once again use appropriate indexes.
+### Query Optimizations
+**General Optimizations**
+
+- SELECT only the columns you need (i.e., avoid `*` when possible).
+- Use the LIMIT when wanting to preview your results. Good when running adhoc queries with pay-per-query billing (i.e., AWS Athena).
+- Use wildcards only at the end of a phrase.
+- Avoid SELECT DISTINCT when possible as it groups the results (which is expensive). You could simply select enough fields to give you unique results.
+- Run expensive queries during off-peak hours.
+- Try to limit your results using filtering and pagination. 
+
+**Indexes**
+- `SELECT` Clause: It's important to choose covering indexes which cover all the columns used in our SELECT, JOIN, and WHERE clauses.
+- `JOIN` Clause: To improve the performance on your join, it's often beneficial to use indexes on your join columns.
+- `ORDER BY` Clauses: To reduce the amount of data stored in memory and improve sorting performance it's important to once again use appropriate indexes.
+- `WHERE` Clause: Here it's important to write SARGABLE queries as well - see below.
+
+**SARGABLE Queries**
+
+It's important to write SARGABLE (Search ARGument ABLE) queries which can use your indexes to improve your query performance. For example if you're using a function on an indexed column inside of your where clause it can prevent the underlying database engine from using the index on that column. This is because that function would have needed to have been applied on every row in that index. If this is necessary, many database systems support creating function-based indexes. This may be a valuable workaround depending on your query patterns.
 
 ##### Reference:
 - [ByteByteGo Secret To Optimizing SQL Queries - Understand The SQL Execution Order](https://www.youtube.com/watch?v=BHwzDmr6d7s&ab_channel=ByteByteGo)
+- [Cody Baldwin - SQL Query Optimization - Tips for More Efficient Queries](https://www.youtube.com/watch?v=GA8SaXDLdsY&ab_channel=CodyBaldwin)
 
 ## Data Modeling
 
