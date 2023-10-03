@@ -59,6 +59,63 @@ With the kimball approach every business process is represented by a dimensional
 
 Dimension tables tend to represent hierarchical relationships. This could be something like having columns: `address`, `city`, `state`. To benefit business users and improve query performance Kimball suggests to store these hierarchical attributes redundantly rather than normalizing the data. This normalization is nicknamed "snowflaking" due to the snowflake-like schema which results from using seperate look up tables to reduce redundancy.
 
+**Important Fact Table Techniques**
+
+_Table Structure_
+
+- Foreign  Keys for each associated dimension table.
+- Optional degenerate dimension keys (dimensions that didn't require an external table).
+- Optional date/time stamps.
+- Numeric measurements based on physical activity.
+
+_Additive, Semi-Additive, Non-Additive Facts_
+
+- Additive: Can be summed across ANY dimension associated with the fact table.
+- Semi-Additive: Can be summed across some dimensions - but not all (i.e., time).
+- Non-Additive: Cannot be added across any dimension (i.e., ratios).
+  - The best practice here is to store the additive components and then sum + calculate in the BI layer.
+
+_Working with Nulls_
+
+- Null-valued measurements are acceptable as aggregate functions know how to deal with nulls correctly.
+- We can't have null Foreign Keys as that would cause a referential integrity violation.
+  - The best practice here is that the dimension table should have a default row representing the NA (Not Applicable) condition.
+ 
+_Conformed Facts_
+
+If the same fact appears in seperate fact tables we should:
+
+1. If the facts are identical if they are compared together -> it is a "conformed fact" and they should be identically named.
+2. If the facts are NOT identical if they are compared together -> they should be named differently to avoid them being computed together.
+
+_[FACT TABLE TYPE I] Transaction Fact Table:_
+
+Each row represents a measurement event at a point in time. Atomic grain transaction fact tables are the most expressive and best handle business user's unpredictable ad-hoc queries. These tables can be either dense or sparse as a row is only appended if a measurement event actually takes place (i.e., someone buys a lemonade from a lemonade stand).
+
+_[FACT TABLE TYPE II] Periodic Snapshot Fact Table:_
+
+A row here corresponds to many measurement events that occurred over a standard period (i.e., weekly, bi-weekly, monthly, etc...). These tables are uniformly dense as a row will be added regardless if a measurement event ever took place. 
+
+_[FACT TABLE TYPE III] Accumulating Snapshot Fact Table:_
+
+A row here corresponds to many measurement events that occurred at predictable steps between the start and end of a process (i.e., workflow process). A date forign key is used for each critical milestone in the process. As steps are reached rows in the fact table are **updated** (these repetitive updates is unique to this fact table type). Additionally, milestone completion counters and numeric lag measurements are often included.
+
+_[FACT TABLE TYPE IV] Factless Fact Tables_
+
+Often there is no numerical result to record from a measurement event. Instead we simply insert a row to record the "fact" that several dimensional entites came together at a moment in time. 
+
+_[FACT TABLE TYPE V] Aggregate Fact Tables_
+
+Aggregate fact tables can be used to accelerate query performance by rolling up atomic fact table data. However, they should behave like database indexes by accelerating queries without being used directly by business users/ BI apps. 
+
+_[FACT TABLE TYPE VI] Consolidated Fact Tables_
+
+Consolidated fact tables combine facts from multiple business processes together to simplify and optimize comparing cross-process metrics that are routinely analyzed together. 
+
+Note:
+1. We are off-loading complexity from the BI layer to the ETL layer.
+2. It's critical that the facts must be expressed at the same grain.
+
 ##### Reference:
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
 
