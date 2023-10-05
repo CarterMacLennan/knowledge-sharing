@@ -116,6 +116,48 @@ Note:
 1. We are off-loading complexity from the BI layer to the ETL layer.
 2. It's critical that the facts must be expressed at the same grain.
 
+**Important Dimension Table Techniques**
+
+_Table Structure_
+
+Dimension tables have a single primary key that acts as the foreign key in the relevant fact table(s). Typicallty dimension tables are wide and short while embracing denormalization to favour simplicity and query performance. On top of this because dimension table attributes are the target for report labels we want to use verbose descriptions while avoiding operational codes and acronyms.
+
+_Dimension Surrogate Keys_
+
+In dimension tables we want to avoid using natural keys as our primary keys. This is because natural keys for a dimension are subject to business rules out of our control, can be incompatible, or simply poorly administrated. To claim control over our primary keys we should create dimension surrogate keys for each dimension table (except for the date dimension). These are anonymous integers that are assigned in sequence starting with the value 1.
+
+_Durable Supernatural Keys_
+
+Whenever we want a new key (i.e., for an employee) we need to create a new “durable” key that will not change even if they resign and are subsequently rehired. Although we may have multiple surrogate keys over their lifetime, this new durable supernatural key will remain the same. Ideally, they should be independent of the business process and are simple integers assigned in sequence starting with 1.
+
+_Degenerate Dimensions_
+
+These dimensions have no content outside of their primary key. As a result the degenerate dimension is placed inside of the fact table with no associated dimension table.
+
+_Multiple Hierarchies in Dimensions_
+
+Many dimensions have a natural hierarchy like location (i.e., city, state, country). We should resist normalizing our dimensions and instead keep them in the same dimension table for simplicity and improved query performance.
+
+_Null Attributes in Dimensions_
+
+We end up will null attributes when a dimension row is not fully populated. Unlike  Fact Tables we want to substitute these nulls with a “Unknown” or “Not Applicable” string. This is because different databases will handle grouping/ constraining on nulls differently.
+
+_Calendar Date Dimensions_
+
+Most fact tables have a calendar date dimension. This is because rather than computing it in SQL you can simply look it up in the given dimension table. Note that in this case the primary key of a date dimension can be something like YYYYMMDD, rather than a sequentially-assigned surrogate key.
+
+_Role-Playing Dimensions_
+
+In some cases you will want to refer to a single physical dimension multiple times in a fact table (i.e., multiple dates in the date dimension). In this case you will have unique attribute columns (nicknamed "roles") that will enable seperate foreign keys to refer to these views.
+
+_Junk Dimensions_
+
+Often it can be handy to have a "junk dimension" to combine several miscellaneous lowcardinality flags that are produced by a business process rather than making seperate dimension tables for each one.
+
+_Outrigger Dimensions_
+
+Outrigger dimensions are dimensions that contain a reference to another dimension table. We can do this, however, typically we would want to show correlation between dimensions using seperate foreign keys in the corresponding fact table. One example of this would be a employee dimension having the attribute "first day" that references the calendar dimension.
+
 ##### Reference:
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
 
