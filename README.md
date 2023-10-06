@@ -158,27 +158,6 @@ _Outrigger Dimensions_
 
 Outrigger dimensions are dimensions that contain a reference to another dimension table. We can do this, however, typically we would want to show correlation between dimensions using seperate foreign keys in the corresponding fact table. One example of this would be a employee dimension having the attribute "first day" that references the calendar dimension.
 
-#### Integration via Conformed Dimensions
-
-One core benefit of dimensional modeling is its ability to successfully integrae data from different business processes. 
-
-_Conformed Dimensions_
-
-Dimension tables conform with eachother when attributes in separate tables have the same column names and domain contents. As a result using these conformed dimension table attributes we can combine data from separate fact tables into a single shared report. This enables both consistency in our analytics and reduced development costs. 
-
-_Shrunken Dimensions_
-
-_Drilling Across_
-
-_Value Chain_
-
-_Enterprise Data Warehouse Bus Architecture_
-
-_Enterprise Data Warehouse Bus Matrix_
-
-_Detailed Implementationn Bus Matrix_
-
-_Opportunity/ Stakeholder Matrix_
 
 ##### Reference:
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
