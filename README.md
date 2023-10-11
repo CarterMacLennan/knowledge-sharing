@@ -158,6 +158,32 @@ _Outrigger Dimensions_
 
 Outrigger dimensions are dimensions that contain a reference to another dimension table. We can do this, however, typically we would want to show correlation between dimensions using seperate foreign keys in the corresponding fact table. One example of this would be a employee dimension having the attribute "first day" that references the calendar dimension.
 
+**Slowly Changing Dimensions**
+
+_Type 0: Retain Original_
+
+These dimension attribute values never change so we don't have to worry about anything here. 
+
+_Type 1: Overwrite_
+
+These dimension attributes will actually change. However, we don't care about storing any historical here so we can simply overwrite the old value with a new one. 
+- Note: When using this approach it's important to ensure that the aggregate fact tables that will be affected by this change are rolled up again.
+
+_Type 2: Add New Row_
+
+For type 2 dimensions we actually care about retaining the historical data. To do this, when an attribute changes we add a new row to the table with a new primary key. To maintain a connection between the two rows we allow the rows to retain the same natural key.
+
+To enable us to analyze Type 2 Dimensions we can use one of the two following approaches:
+1. A flag column to show which record is up-to-date (i.e., active).
+2. A timestamp column to show when the record was added. Additionally, you could have two timestamp columns: one to mark when the record was up-to-date and when it was made out-of-date.
+
+_Type 3: Add New Attribute_
+
+
+
+_Type 4: Add Mini-Dimension_
+
+
 
 ##### Reference:
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
