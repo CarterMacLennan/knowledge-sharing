@@ -179,11 +179,11 @@ To enable us to analyze Type 2 Dimensions we can use one of the two following ap
 
 _Type 3: Add New Attribute_
 
-
+With Type 3 dimensions we track changes by simply adding a new column. This is useful if you require your primary keys to remain unique and have just one record for each natural key. However, this doesn't scale as well since you can only really track one change in a record rather than multiple changes over time (using Type 2 Dimensions).
 
 _Type 4: Add Mini-Dimension_
 
-
+With Type 4 dimensions we store records in two separate tables: a current record table as well as a historical record table. Records that are up-to-date (active) will be in one "current" table while the historical records will be stored in the "historical" table. This scales well and works great for attributes that change often.
 
 ##### Reference:
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
