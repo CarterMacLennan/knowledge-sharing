@@ -40,6 +40,57 @@ It's important to write SARGABLE (Search ARGument ABLE) queries which can use yo
 
 ## Data Modeling
 
+### Normalization
+
+Normalized tables can be easier to understand, enhance, and extend, as well as protect data integrity by preventing insertion/ update/ deletion of anomalies. To assess the level of danger we are facing due to a lack of normalization we have a set of criteria that categorizes the level of normalization of your database.
+
+#### 1NF:
+
+- Every cell in a table should only contain a single value that cannot be divided (i.e., cannot contain a list of names).
+- Unique column names.
+- The order in which data is stored in the database does not matter. For example, the rows shouldn't be expected to be stored in alphabetical order.
+- Every row must be unique.
+
+#### 2NF:
+
+- First, the table must already be in 1NF.
+- Every non-key attribute must depend on the entire primary key (i.e., composite key).
+  - We should create a seperate table when we encounter attributes that do not meet meet the above criteria.
+
+<img width="1167" alt="Screenshot 2023-10-14 at 3 51 52 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/857df34c-baaa-45b6-b306-c78fad4ec094">
+<img width="954" alt="Screenshot 2023-10-14 at 3 51 35 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/16ad4c03-1ffe-43a4-b45c-6e302f03e0b1">
+
+
+#### 3NF:
+
+_Every non-key attribute in a table should depend on the key, the whole key, and nothing but the key._
+
+- First, the table must already be in 2NF.
+- Here we must get rid of any "transitive" dependencies (when non-primary keys depend on other non-primary keys).
+  - To fix this we simply seperate this transitive dependency into a seperate table. 
+
+<img width="799" alt="Screenshot 2023-10-14 at 3 51 13 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/3da9ae86-f538-4f3b-b047-bc76d864cc4b">
+<img width="1201" alt="Screenshot 2023-10-14 at 3 50 54 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/1acac802-3156-4fcc-b06e-e01be765bbe2">
+
+#### 4NF:
+
+- First, the table must already be in 3NF.
+- Here we want to ensure there are only multivalued dependencies on the key.
+  - To do this we seperate these dependencies out into separate tables
+
+<img width="457" alt="Screenshot 2023-10-14 at 3 50 22 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/daefa7a7-35f1-4dd9-b4a1-033afd438279">
+<img width="871" alt="Screenshot 2023-10-14 at 3 49 51 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/11e5a6f4-20f8-452b-b11d-e41e65e181fd">
+
+
+#### 5NF:
+
+- First, the table must already be in 4NF.
+- The table must not be able to be decomposed into any number of smaller tables without loss of data.
+
+<img width="509" alt="Screenshot 2023-10-14 at 3 48 46 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/0173e712-73a0-4f7c-9c74-23a47e7a560c">
+<img width="895" alt="Screenshot 2023-10-14 at 3 49 23 PM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/745f06bb-dab4-4db3-9b48-375793c11ef0">
+
+
 ### Inmon Data Modeling
 
 The Inmon approach takes advantage of normalization to avoid data redundancy as much as possible. Additionally, this greatly simplifies data loading and helps prevent any data update irregularities. However, this approach does result in more complex queries which leads to less optimal query performance.
@@ -192,6 +243,7 @@ _Type 4: Add Mini-Dimension_
 With Type 4 dimensions we store records in two separate tables: a current record table as well as a historical record table. Records that are up-to-date (active) will be in one "current" table while the historical records will be stored in the "historical" table. This scales well and works great for attributes that change often.
 
 ##### Reference:
+- [Decomplexify "Learn Database Normalization"](https://www.youtube.com/watch?v=GFQaEYEc8_8&ab_channel=Decomplexify)
 - [Data Warehouse Toolkit](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/books/data-warehouse-dw-toolkit/)
 
 ## Database Internals
