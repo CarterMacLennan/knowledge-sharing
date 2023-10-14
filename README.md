@@ -40,7 +40,13 @@ It's important to write SARGABLE (Search ARGument ABLE) queries which can use yo
 
 ## Data Modeling
 
-#### Kimball's Dimensional Modeling
+### Inmon Data Modeling
+
+The Inmon approach takes advantage of normalization to avoid data redundancy as much as possible. Additionally, this greatly simplifies data loading and helps prevent any data update irregularities. However, this approach does result in more complex queries which leads to less optimal query performance.
+
+Inmon proposes constructing seperate data marts for each enterprise division (i.e., marketing) while the data warehouse acts as the single data source to ensure integrity and consistency.
+
+### Kimball's Dimensional Modeling
 Kimball's approach denormalizes the source/ staging data into two main components:
 
 **Facts:**
