@@ -1,6 +1,7 @@
 # Open-Sourcing my Learning
 
 - [Query Processing](#query-processing)
+- [Data Architecture](#data-architecture)
 - [Data Modeling](#data-modeling)
 - [Database Internals](#database-internals)
 
@@ -37,6 +38,12 @@ It's important to write SARGABLE (Search ARGument ABLE) queries which can use yo
 ##### Reference:
 - [ByteByteGo Secret To Optimizing SQL Queries - Understand The SQL Execution Order](https://www.youtube.com/watch?v=BHwzDmr6d7s&ab_channel=ByteByteGo)
 - [Cody Baldwin - SQL Query Optimization - Tips for More Efficient Queries](https://www.youtube.com/watch?v=GA8SaXDLdsY&ab_channel=CodyBaldwin)
+
+## Data Architecture
+
+### Data Mesh
+
+### Data Vault
 
 ## Data Modeling
 
