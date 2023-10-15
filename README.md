@@ -310,6 +310,31 @@ Collects the results of the execution of local & remote operations.
 - Buffer Manager: Caches data pages in memory.
 - Recovery Manager: Maintains the operation log and restoring the system state in case of failure.
 
+**Memory Vs. Disk-Based DBMS**
+
+Disk-based databases: 
+- Hold most of the data on **disk**.
+- Use memory for caching disk contents or as temporary storage.
+
+In-memory databases (also known as "main memory databases"):
+- Store data primarily in **memory**
+- Use **disk** for recovery and logging.
+
+Programming for Main Memory Vs. Disk-Based:
+In-memory databases use different data structures, organization, and optimization techniques from their disk-based counterparts. The benefit here is that programming for main memory is much simpler than for disk-based databases. This is because the OS abstracts memory management away from us to allow us to think in terms of allocating and freeing memory chunks. Main memory databases can choose from a larger pool of data structures that would be impossible or very complex on disk. They're also easily able to handle variable-size data by simply referencing the value with a pointer. On the other hand, when working on disk we have to think about: managing data references, serialization formats, freed memory, and fragmentation. They also use specialized storage structures, optimized for disk access (i.e., wide and short trees).
+
+Limitations of Main Memory Databases:
+
+1. RAM Volatility: Since RAM does not persist data, software crashes, hardware failures, and power outages result in data loss. To mitigate these risks you can ensure uninterrupted power supplies or battery-packed RAM but these require additional up-front and maintenance cost.
+2. Performance & Price Trade-Off: Naturally, accessing memory is several orders of magnitude faster than disk. However, RAM is still much more expensive than SSDs and HDDs. As memory prices go down they become a compelling alternative. On top of this, there is a rising popularity of Non-Volatile Memory which are also capable of improving read and write performance.
+
+**Durability in Memory-Based Stores:**
+
+Some main memory databases provide no durability guarentees by storing data exclusively in memory. However, most will maintain backups on disk to provide some durability guarentees. 
+
+Before operations are marked complete, their results are written to a sequential log file. To avoid replaying the complete log contents after a crash in-memory stores maintain a "backup copy". This backup copy is maintained as a sorted disk-based structure, and modifications to this
+structure are typically asynchronous and applied in batches to reduce the number of I/O operations. When these log records are applied in batches, the backup now holds a complete snapshot up to that specific point in time. Because of this, the log contents up to this point can be discarded. This is a technique known as "checkpointing".
+
 
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
