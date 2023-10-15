@@ -248,6 +248,38 @@ With Type 4 dimensions we store records in two separate tables: a current record
 
 ## Database Internals
 
+### Notes from "Database Internals" by Alex Petrov:
+
+#### Storage Engines (or database engines)
+
+Databases are modular systems made up of multiple parts:
+1. Transport Layer accepting requests.
+2. Query Processor for optimizing the way we run queries.
+3. Execution Engine for carrying out the query.
+4. Storage engine for storing, retrieving, and managing data in memory and on disk.
+
+One good way of thinking about Storage Engines is to treat DBMS like applications that are built on top of storage engines. These applications offer a schema, query language, indexing, transactions, etc… On the other hand, the storage engines themselves are a software component that offer a simple data manipulation API allowing CRUD actions. 
+
+It’s not uncommon for storage engines to be developed independently from their DMBS they become embedded into (i.e., BerkeleyDB, LevelDB, RocksDB, LMDB,etc….). This approach has enabled devs to focus on enhancing/ extending other subsystems by using pluggable database engines which can be swapped out for different use cases (i.e., MySQL has several storage engines: RocksDB, InnoDB, etc…). 
+
+**CHAPTER 1 - Introduction & Overview**
+
+Three Major Categories:
+- OLTP: Handle large number of user-facing requests and transactions. Queries often predefined and short-lived.
+- OLAP: Used for analytics (complex aggregations) and data warehousing, they are capable of handling complex, long-running ad hoc queries. 
+- HTAP: Combine properties of both OLAP and OLTP.
+
+There are many other terms and classifications: 
+- Key-Value Stores
+- Relational Databases
+- Document-Oriented Stores
+- Graph Databases
+
+DBMS can also serve different purposes: 
+- Temporary hot data Vs.  long-lived cold storage
+- Complex analytical queries Vs.  accessing values by a given key
+- Optimized to store time-series data Vs. storing large blobs efficiently
+
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
 - [Designing Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/)
