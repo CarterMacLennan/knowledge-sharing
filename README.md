@@ -280,6 +280,37 @@ DBMS can also serve different purposes:
 - Complex analytical queries Vs.  accessing values by a given key
 - Optimized to store time-series data Vs. storing large blobs efficiently
 
+**DBMS Architecture:**
+
+<img width="608" alt="Screenshot 2023-10-15 at 11 08 12 AM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/6e54372e-f3ea-4e41-bceb-060dc2d80d41">
+
+**Transport Subsystem:**
+
+1. Receives client requests in the form of queries (expressed in some query language). 
+    - Forwards queries to the _query processor_.
+2. Responsible for communication between nodes in the database cluster.
+
+**Query Processor:**
+
+1. Query Parser: Parses, interprets, and validates the query. After interpreting, access controls checks are performed.
+2. Query Optimizer: Eliminates redundant parts of the query, finds optimal way to execute based on internal statistics and data placement.
+3. Outputs the best available _execution plan/ query plan_ (list of operations to execute the query).
+
+**Execution Engine:**
+
+Collects the results of the execution of local & remote operations.
+- Remote Execution: Reading/ writing data to and from other nodes in the cluster.
+
+**Storage Engine:**
+
+- Transaction Manager: Schedules transactions & ensures they leave in a consistent state.
+- Lock Manager: Ensures concurrent operations don't violate data integrity by locking onto database objects for the currently running transactions.
+- Access Methods: The storage structures that manage accessing and organizing data on disk.
+  - Heap files, B-Trees, LSM Trees, etc...
+- Buffer Manager: Caches data pages in memory.
+- Recovery Manager: Maintains the operation log and restoring the system state in case of failure.
+
+
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
 - [Designing Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/)
