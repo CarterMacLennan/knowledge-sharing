@@ -341,6 +341,8 @@ Column-oriented DBMS partition data vertically (i.e., by column) instead of stor
 
 By storing different columns in separate file/ file segments we only have to read in the data we're querying. Otherwise we would be consuming entire rows and discarding the columns we don't need. Column-oriented databases are great for analytical workloads performing complex aggregations. 
 
+One added benefit of Column-Oriented databases is they store values with the same data type together. This offers a better compression ratio since we can use different compression algorithms depending on the data type, allowing us to choose the most effective method for every case.
+
 EXAMPLE:
 
 ```
