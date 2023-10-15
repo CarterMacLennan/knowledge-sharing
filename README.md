@@ -335,6 +335,35 @@ Some main memory databases provide no durability guarentees by storing data excl
 Before operations are marked complete, their results are written to a sequential log file. To avoid replaying the complete log contents after a crash in-memory stores maintain a "backup copy". This backup copy is maintained as a sorted disk-based structure, and modifications to this
 structure are typically asynchronous and applied in batches to reduce the number of I/O operations. When these log records are applied in batches, the backup now holds a complete snapshot up to that specific point in time. Because of this, the log contents up to this point can be discarded. This is a technique known as "checkpointing".
 
+**Column Vs. Row-Oriented DBMS**
+
+Column-oriented DBMS partition data vertically (i.e., by column) instead of storing it in rows. As a result, values in the same column will be stored contiguously on disk (rather than by row). 
+
+By storing different columns in separate file/ file segments we only have to read in the data we're querying. Otherwise we would be consuming entire rows and discarding the columns we don't need. Column-oriented databases are great for analytical workloads performing complex aggregations. 
+
+EXAMPLE:
+
+```
+| ID | Symbol | Date        | Price     |
+| 1 | DOW    | 08 Aug 2018 | 24,314.65 |
+| 2 | DOW    | 09 Aug 2018 | 24,136.16 |
+| 3 | S&P    | 08 Aug 2018 | 2,414.45  |
+| 4 | S&P    | 09 Aug 2018 | 2,232.32  |
+```
+
+BECOMES:
+
+```
+Symbol: 1:DOW; 2:DOW; 3:S&P; 4:S&P
+Date: 1:08 Aug 2018; 2:09 Aug 2018; 3:08 Aug 2018; 4:09 Aug 2018
+Price: 1:24,314.65; 2:24,136.16; 3:2,414.45; 4:2,232.32
+```
+
+Handling Tuples:
+When we perform joins, filtering, and multirow aggregates we often require data tuples. To facilitate this, we need to preserve metadata on the column level to find the other data points in other columns it's associated with. 
+
+1. Explicit: Each value holds a key. However, this greatly increases the amount of data stored.
+2. Implicit: Use the position of the value (i.e., it's offset) to map to the associated value.
 
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
