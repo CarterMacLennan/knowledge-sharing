@@ -367,6 +367,51 @@ When we perform joins, filtering, and multirow aggregates we often require data 
 1. Explicit: Each value holds a key. However, this greatly increases the amount of data stored.
 2. Implicit: Use the position of the value (i.e., it's offset) to map to the associated value.
 
+#### Data Files and Index Files
+
+A database system usually separates data files and index files: 
+- Data files store data records
+- Index files store record metadata and use it to locate records in data files. 
+
+Database systems store data records in tables usually represented as a separate file. In these tables records can be looked up using a search key alongside an index to avoid scanning the entire table. Files are partitioned into pages that are one or several disk blocks in size.
+
+Inserts/ updates to existing records are represented by key/value pairs. Modern databases rarely explicty delete a page. Instead the simply use deletion markers known as "tombstones" that contain delete metadata (i.e., key & timestamp). This space is later reclaimed during garbage collection by reading the pages, writing live records to their new location and deleting the legacy records.
+
+**Data Files**
+
+Data files (also called primary files) can be implemented three different ways:
+1. Heap-organized Tables (Heap Files)
+2. Hash-organized Tables (Hashed Files)
+3. Index Organized Tables (IOT)
+
+Heap-organized Tables (Heap Files):
+To avoid added work, records in heap files don't need to be inserted in a particular order. So, they're usually just placed in a write order. To make heap files searchable they require additional index structures to point to the locations where data records are stored.
+
+Hash-organized Tables (Hashed Files):
+Here, records are stored in buckets, and we use the hash value of the key to find the bucket containing our record. The records inside each bucket can be stored in append order or sorted by key to improve lookup speed.
+
+Index Organized Tables (IOT):
+This approach actually stores the data records in the index itself. Because records are already stored in key order, range scans in IOTs can be implemented by sequentially scanning its contents. This also reduces the number of disk seeks by at least one, since after locating the searched key, we don't need to address a separate file to find our data record.
+
+**Index Files**
+
+An index is a **structure that organizes data records** on disk in a way that **facilitates** **efficient** **retrieval** operations.They map keys to locations in data files where the records identified by these keys (in the case of heap files) or primary keys (in the case of IOT) are stored.
+
+Primary Index:
+An index on a primary (data) file is called the primary index. However, we can usually assume this primary index is built over a primary key(s). All other indexes are called secondary indexes.
+
+Secondary Index:
+Secondary indexes can point directly to the data record or just store its primary key. A pointer to a data record can hold an offset to a heap file or an index-organized table. 
+
+Multiple secondary indexes can actually point to the same record, which allows a single data record to be identified by different fields and located through different indexes. 
+
+Clustered Index:
+An index is "clustered" if the order of **data records follows the search key order**. Data records in this case are typically **stored in the same file** or a "clustered file", so the key order is preserved. **Index-organized tables** store information in index order and **are clustered by definition**. Primary indexes are most often clustered.
+
+Nonclusted/ unclustered Index:
+Nonclustered Indexes are when the data is stored in a **separate file**, and its **order does not follow the key order**. **Secondary indexes are nonclustered** by definition, since they’re used to facilitate access by keys other than the primary one. Clustered indexes can be both index-organized or have separate index and data files.
+
+
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
 - [Designing Data Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/)
