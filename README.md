@@ -411,6 +411,40 @@ An index is "clustered" if the order of **data records follows the search key or
 Nonclusted/ unclustered Index:
 Nonclustered Indexes are when the data is stored in a **separate file**, and its **order does not follow the key order**. **Secondary indexes are nonclustered** by definition, since they’re used to facilitate access by keys other than the primary one. Clustered indexes can be both index-organized or have separate index and data files.
 
+**Buffering, Immutability, and Ordering**
+
+A storage engine is based on some data structure. However, these data structures **do not include**:
+- caching
+- recovery
+- transactionality
+- other things that storage engines add on top of them....
+
+Storage structures have 3 common variables for distinctions and optimizations in storage structures: 
+1. They use buffering (or avoid using it), 
+2. Immutable (or mutable) files
+3. Store values in order (or out of order).
+
+BUFFERING:
+Should the storage structure collect "X" amount of data in memory before putting it on disk?
+- Note: Every on-disk structure has to use buffering to some degree, as the smallest unit of data transfer to/ from disk is a block (and it is desirable to write full blocks). 
+
+What we’re discussing is **avoidable buffering**. 
+- Adding in-memory buffers to B-Tree nodes to amortize I/O costs (“Lazy B-Trees”).
+- Two-component LSM Trees use buffering in an entirely different way, and combine buffering with immutability.
+
+MUTABILITY (or immutability):
+- Mutable: Should the storage structure read parts of a file, update then, and then simply write the updated part back at the same location in the file? 
+- Immutable: Or should we append modifications at the end of the file and avoid modifying the contents of the file?
+
+Alternative implementations of immutability:
+- Copy-on-write: The modified page holding the updated version of the record, is written to a new location in the file, instead of its original location.
+- Often the distinction between LSM and B-Trees is drawn as immutable against in-place update storage (mutable), but there are structures (i.e., BwTrees) that are inspired by B-Trees but are immutable.
+
+ORDERING:
+Should the data records be stored in key order in the pages on disk? This not only helps locate the individual data records but helps us efficiently scan the range of records. This is because the keys that "sort closely" are stored in contiguous segments on disk. 
+
+Storing data out of order (i.e., in insertion order) opens up for some write-time optimizations. 
+- i.e., Bitcask and WiscKey store data records directly in append-only files.
 
 ##### Reference:
 - [Database Internals](https://www.oreilly.com/library/view/database-internals)
