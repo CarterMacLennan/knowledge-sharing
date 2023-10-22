@@ -1,7 +1,7 @@
 # Open-Sourcing my Learning
 
 - [Database Internals](#database-internals)
-- [Distributed Systems](#distributed-sytems)
+- [Distributed Systems](#distributed-systems)
 - [Data Modeling](#data-modeling)
 - [Query Processing](#query-processing)
 
