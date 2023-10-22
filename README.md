@@ -5,11 +5,11 @@
 - [Data Modeling](#data-modeling)
 - [Query Processing](#query-processing)
 
-## Database Internals
+# Database Internals
 
-### Notes from "Database Internals" by Alex Petrov:
+- _Notes from "Database Internals" by Alex Petrov:_
 
-#### Storage Engines (or database engines)
+## Storage Engines (or database engines)
 
 Databases are modular systems made up of multiple parts:
 1. Transport Layer accepting requests.
@@ -21,7 +21,7 @@ One good way of thinking about Storage Engines is to treat DBMS like application
 
 It’s not uncommon for storage engines to be developed independently from their DMBS they become embedded into (i.e., BerkeleyDB, LevelDB, RocksDB, LMDB,etc….). This approach has enabled devs to focus on enhancing/ extending other subsystems by using pluggable database engines which can be swapped out for different use cases (i.e., MySQL has several storage engines: RocksDB, InnoDB, etc…). 
 
-**CHAPTER 1 - Introduction & Overview**
+## CHAPTER 1 - Introduction & Overview
 
 Three Major Categories:
 - OLTP: Handle large number of user-facing requests and transactions. Queries often predefined and short-lived.
@@ -39,28 +39,28 @@ DBMS can also serve different purposes:
 - Complex analytical queries Vs.  accessing values by a given key
 - Optimized to store time-series data Vs. storing large blobs efficiently
 
-**DBMS Architecture:**
+### DBMS Architecture:
 
 <img width="608" alt="Screenshot 2023-10-15 at 11 08 12 AM" src="https://github.com/CarterMacLennan/knowledge-sharing/assets/60050873/6e54372e-f3ea-4e41-bceb-060dc2d80d41">
 
-**Transport Subsystem:**
+#### Transport Subsystem:
 
 1. Receives client requests in the form of queries (expressed in some query language). 
     - Forwards queries to the _query processor_.
 2. Responsible for communication between nodes in the database cluster.
 
-**Query Processor:**
+#### Query Processor:
 
 1. Query Parser: Parses, interprets, and validates the query. After interpreting, access controls checks are performed.
 2. Query Optimizer: Eliminates redundant parts of the query, finds optimal way to execute based on internal statistics and data placement.
 3. Outputs the best available _execution plan/ query plan_ (list of operations to execute the query).
 
-**Execution Engine:**
+#### Execution Engine:
 
 Collects the results of the execution of local & remote operations.
 - Remote Execution: Reading/ writing data to and from other nodes in the cluster.
 
-**Storage Engine:**
+#### Storage Engine:
 
 - Transaction Manager: Schedules transactions & ensures they leave in a consistent state.
 - Lock Manager: Ensures concurrent operations don't violate data integrity by locking onto database objects for the currently running transactions.
@@ -69,32 +69,31 @@ Collects the results of the execution of local & remote operations.
 - Buffer Manager: Caches data pages in memory.
 - Recovery Manager: Maintains the operation log and restoring the system state in case of failure.
 
-**Memory Vs. Disk-Based DBMS**
+#### Memory Vs. Disk-Based DBMS
 
-Disk-based databases: 
+**Disk-based databases**:
 - Hold most of the data on **disk**.
 - Use memory for caching disk contents or as temporary storage.
 
-In-memory databases (also known as "main memory databases"):
+**In-memory databases** (also known as "main memory databases"):
 - Store data primarily in **memory**
 - Use **disk** for recovery and logging.
 
-Programming for Main Memory Vs. Disk-Based:
+**Programming for Main Memory Vs. Disk-Based**:
 In-memory databases use different data structures, organization, and optimization techniques from their disk-based counterparts. The benefit here is that programming for main memory is much simpler than for disk-based databases. This is because the OS abstracts memory management away from us to allow us to think in terms of allocating and freeing memory chunks. Main memory databases can choose from a larger pool of data structures that would be impossible or very complex on disk. They're also easily able to handle variable-size data by simply referencing the value with a pointer. On the other hand, when working on disk we have to think about: managing data references, serialization formats, freed memory, and fragmentation. They also use specialized storage structures, optimized for disk access (i.e., wide and short trees).
 
-Limitations of Main Memory Databases:
-
+**Limitations of Main Memory Databases**:
 1. RAM Volatility: Since RAM does not persist data, software crashes, hardware failures, and power outages result in data loss. To mitigate these risks you can ensure uninterrupted power supplies or battery-packed RAM but these require additional up-front and maintenance cost.
 2. Performance & Price Trade-Off: Naturally, accessing memory is several orders of magnitude faster than disk. However, RAM is still much more expensive than SSDs and HDDs. As memory prices go down they become a compelling alternative. On top of this, there is a rising popularity of Non-Volatile Memory which are also capable of improving read and write performance.
 
-**Durability in Memory-Based Stores:**
+#### Durability in Memory-Based Stores:
 
 Some main memory databases provide no durability guarentees by storing data exclusively in memory. However, most will maintain backups on disk to provide some durability guarentees. 
 
 Before operations are marked complete, their results are written to a sequential log file. To avoid replaying the complete log contents after a crash in-memory stores maintain a "backup copy". This backup copy is maintained as a sorted disk-based structure, and modifications to this
 structure are typically asynchronous and applied in batches to reduce the number of I/O operations. When these log records are applied in batches, the backup now holds a complete snapshot up to that specific point in time. Because of this, the log contents up to this point can be discarded. This is a technique known as "checkpointing".
 
-**Column Vs. Row-Oriented DBMS**
+#### Column Vs. Row-Oriented DBMS
 
 Column-oriented DBMS partition data vertically (i.e., by column) instead of storing it in rows. As a result, values in the same column will be stored contiguously on disk (rather than by row). 
 
@@ -170,7 +169,7 @@ An index is "clustered" if the order of **data records follows the search key or
 Nonclusted/ unclustered Index:
 Nonclustered Indexes are when the data is stored in a **separate file**, and its **order does not follow the key order**. **Secondary indexes are nonclustered** by definition, since they’re used to facilitate access by keys other than the primary one. Clustered indexes can be both index-organized or have separate index and data files.
 
-**Buffering, Immutability, and Ordering**
+#### Buffering, Immutability, and Ordering
 
 A storage engine is based on some data structure. However, these data structures **do not include**:
 - caching
@@ -183,7 +182,7 @@ Storage structures have 3 common variables for distinctions and optimizations in
 2. Immutable (or mutable) files
 3. Store values in order (or out of order).
 
-BUFFERING:
+**Buffering:**
 Should the storage structure collect "X" amount of data in memory before putting it on disk?
 - Note: Every on-disk structure has to use buffering to some degree, as the smallest unit of data transfer to/ from disk is a block (and it is desirable to write full blocks). 
 
@@ -191,7 +190,7 @@ What we’re discussing is **avoidable buffering**.
 - Adding in-memory buffers to B-Tree nodes to amortize I/O costs (“Lazy B-Trees”).
 - Two-component LSM Trees use buffering in an entirely different way, and combine buffering with immutability.
 
-MUTABILITY (or immutability):
+**Mutability (or immutability):**
 - Mutable: Should the storage structure read parts of a file, update then, and then simply write the updated part back at the same location in the file? 
 - Immutable: Or should we append modifications at the end of the file and avoid modifying the contents of the file?
 
@@ -199,7 +198,7 @@ Alternative implementations of immutability:
 - Copy-on-write: The modified page holding the updated version of the record, is written to a new location in the file, instead of its original location.
 - Often the distinction between LSM and B-Trees is drawn as immutable against in-place update storage (mutable), but there are structures (i.e., BwTrees) that are inspired by B-Trees but are immutable.
 
-ORDERING:
+**Ordering:**
 Should the data records be stored in key order in the pages on disk? This not only helps locate the individual data records but helps us efficiently scan the range of records. This is because the keys that "sort closely" are stored in contiguous segments on disk. 
 
 Storing data out of order (i.e., in insertion order) opens up for some write-time optimizations. 
